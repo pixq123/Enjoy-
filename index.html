@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>Fresh Premium Dashboard — Mobile App</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6fbff;
+      --card:#ffffff;
+      --muted:#6b7a90;
+      --accent:#2b9cff;
+      --accent-2:#7be3c7;
+      --accent-3:#ff7ab6;
+      --accent-4:#ffcf6b;
+      --radius:16px;
+      --glass: rgba(43,156,255,0.08);
+      --safe-area: env(safe-area-inset-bottom, 16px);
+    }
+    
+    *{box-sizing:border-box}
+    
+    body{
+      margin:0;
+      font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#f6fbff 0%, #eff9ff 100%);
+      color:#15223d;
+      padding:0;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Mobile Container */
+    .mobile-container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 12px;
+      padding-bottom: calc(70px + var(--safe-area));
+    }
+
+    /* Enhanced Mobile Header */
+    .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg,#f6fbff 0%, #eff9ff 100%);
+      z-index: 100;
+      padding-top: env(safe-area-inset-top, 12px);
+    }
+
+    .brand { display:flex; gap:12px; align-items:center; }
+    .logo {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:white; font-weight:800; font-size:16px;
+      box-shadow: 0 4px 20px rgba(43,156,255,0.18);
+    }
+    .brand-text h1 { margin:0; font-size:18px; letter-spacing:-0.2px; font-weight:700; }
+    .brand-text p { margin:0; color:var(--muted); font-size:12px; }
+
+    /* Mobile Controls */
+    .mobile-controls { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 16px;
+    }
+    
+    .search-box-mobile {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(43,156,255,0.08);
+      border: 1px solid rgba(16,24,40,0.03);
+      position: relative;
+    }
+    
+    .search-box-mobile input {
+      border:0; 
+      outline:none; 
+      background:transparent; 
+      width:100%;
+      font-size:14px; 
+      color:#15223d; 
+      font-weight:500;
+    }
+    
+    .search-loading {
+      position: absolute;
+      right: 12px;
+      display: none;
+      gap: 3px;
+    }
+    
+    .search-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: searchBounce 1.4s infinite ease-in-out;
+    }
+    
+    .search-dot:nth-child(1) { animation-delay: -0.32s; }
+    .search-dot:nth-child(2) { animation-delay: -0.16s; }
+    
+    @keyframes searchBounce {
+      0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+      40% { transform: scale(1.2); opacity: 1; }
+    }
+    
+    .btn-mobile-primary {
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff; 
+      border:0; 
+      border-radius:12px; 
+      padding: 12px 16px;
+      font-weight:600;
+      font-size: 14px;
+      box-shadow: 0 6px 20px rgba(43,156,255,0.16);
+      white-space: nowrap;
+    }
+
+    /* Mobile Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-card-mobile {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(47,74,99,0.04);
+      border: 1px solid rgba(16,24,40,0.03);
+    }
+    
+    .stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg,var(--accent),#2bb3ff);
+      color: white;
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Search Results */
+    .search-results {
+      background: white;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(47,74,99,0.04);
+      overflow: hidden;
+      display: none;
+    }
+    
+    .results-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(16,24,40,0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .results-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .results-count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .result-item {
+      padding: 16px;
+      border-bottom: 1px solid rgba(16,24,40,0.03);
+      transition: background 0.2s ease;
+    }
+    
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .result-item:hover {
+      background: rgba(43,156,255,0.03);
+    }
+    
+    .result-main {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #15223d;
+      font-size: 15px;
+    }
+    
+    .result-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .result-detail {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 4px 0;
+    }
+    
+    .result-label {
+      color: var(--muted);
+      font-weight: 500;
+      min-width: 100px;
+    }
+    
+    .result-value {
+      color: #15223d;
+      flex: 1;
+      text-align: right;
+    }
+    
+    .result-highlight {
+      background: rgba(43,156,255,0.1);
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Mobile Tabs */
+    .mobile-tabs {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    
+    .mobile-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .mobile-tab.active {
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color: white;
+      box-shadow: 0 2px 8px rgba(43,156,255,0.2);
+    }
+
+    /* Mobile Chart */
+    .chart-container-mobile {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(47,74,99,0.04);
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .chart-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .chart-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .chart-wrapper {
+      height: 200px;
+      position: relative;
+    }
+
+    /* Mobile Table */
+    .table-container-mobile {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(47,74,99,0.04);
+      margin-bottom: 16px;
+    }
+    
+    .table-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(16,24,40,0.04);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .table-content {
+      max-height: 300px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .mobile-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .mobile-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(16,24,40,0.04);
+      position: sticky;
+      top: 0;
+      background: white;
+    }
+    
+    .mobile-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(16,24,40,0.03);
+    }
+    
+    .mobile-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Mobile Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px;
+      padding-bottom: calc(12px + var(--safe-area));
+      border-top: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      z-index: 1000;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 10px;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-item.active {
+      color: var(--accent);
+    }
+    
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    /* Mobile Actions */
+    .mobile-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .btn-mobile-secondary {
+      flex: 1;
+      background: white;
+      border: 1px solid rgba(16,24,40,0.1);
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 500;
+      font-size: 14px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+    
+    /* Loading States */
+    .skeleton {
+      background: linear-gradient(90deg,#f1f6fb 25%,#eef8ff 50%,#f1f6fb 75%);
+      background-size:200% 100%;
+      animation: shine 1.6s linear infinite;
+      border-radius:8px;
+    }
+    
+    @keyframes shine {
+      0% { background-position:200% 0 }
+      100% { background-position:-200% 0 }
+    }
+
+    /* No Results State */
+    .no-results-mobile {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+    
+    .no-results-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(43,156,255,0.1), rgba(123,227,199,0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    
+    .no-results-icon i {
+      font-size: 32px;
+      color: var(--accent);
+    }
+
+    /* Swipe Indicators */
+    .swipe-hint {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .swipe-hint i {
+      font-size: 14px;
+    }
+
+    /* Responsive Adjustments */
+    @media (min-width: 768px) {
+      .mobile-container {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+    }
+
+    /* Touch-friendly sizes */
+    button, .btn-mobile-primary, .btn-mobile-secondary, .mobile-tab {
+      min-height: 44px;
+    }
+    
+    input, select {
+      font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <div class="brand">
+        <div class="logo">FD</div>
+        <div class="brand-text">
+          <h1>FreshDash</h1>
+          <p>Search & Analyze Data</p>
+        </div>
+      </div>
+      <div>
+        <button class="btn-mobile-primary" id="refreshBtn">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+      <div class="search-box-mobile">
+        <i class="bi bi-search" style="color:var(--accent)"></i>
+        <input type="text" id="mobileSearch" placeholder="Search in Google Sheets data...">
+        <div class="search-loading" id="searchLoading">
+          <div class="search-dot"></div>
+          <div class="search-dot"></div>
+          <div class="search-dot"></div>
+        </div>
+        <button id="clearSearch" class="btn btn-sm btn-light" style="display:none">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    <div class="search-results" id="searchResults">
+      <div class="results-header">
+        <div class="results-title">Search Results</div>
+        <div class="results-count" id="resultsCount">0 results</div>
+      </div>
+      <div id="resultsList">
+        <!-- Results will be populated here -->
+      </div>
+    </div>
+
+    <!-- Mobile Stats -->
+    <div class="stats-grid">
+      <div class="stat-card-mobile fade-in">
+        <div class="stat-icon">
+          <i class="bi bi-database"></i>
+        </div>
+        <div class="stat-value" id="mobileTotal">—</div>
+        <div class="stat-label">Total Rows</div>
+      </div>
+      <div class="stat-card-mobile fade-in" style="animation-delay: 0.1s">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#ff7ab6,#ffcf6b)">
+          <i class="bi bi-funnel"></i>
+        </div>
+        <div class="stat-value" id="mobileFiltered">—</div>
+        <div class="stat-label">Filtered</div>
+      </div>
+    </div>
+
+    <!-- Mobile Tabs -->
+    <div class="mobile-tabs">
+      <div class="mobile-tab active" data-tab="data">All Data</div>
+      <div class="mobile-tab" data-tab="charts">Charts</div>
+      <div class="mobile-tab" data-tab="insights">Insights</div>
+    </div>
+
+    <!-- Mobile Actions -->
+    <div class="mobile-actions">
+      <button class="btn-mobile-secondary" id="downloadMobile">
+        <i class="bi bi-download"></i> Export
+      </button>
+      <button class="btn-mobile-secondary" id="filterMobile">
+        <i class="bi bi-funnel"></i> Filter
+      </button>
+    </div>
+
+    <!-- Swipe Hint -->
+    <div class="swipe-hint">
+      <i class="bi bi-arrow-left"></i>
+      <span>Swipe to see more columns</span>
+      <i class="bi bi-arrow-right"></i>
+    </div>
+
+    <!-- Data Tab Content -->
+    <div class="tab-content" id="dataTab">
+      <div class="table-container-mobile">
+        <div class="table-header">
+          <span>All Data</span>
+          <span class="chart-subtitle" id="tableInfoMobile">No data</span>
+        </div>
+        <div class="table-content">
+          <table class="mobile-table">
+            <thead id="mobileThead">
+              <!-- Headers will be populated here -->
+            </thead>
+            <tbody id="mobileTbody">
+              <tr>
+                <td colspan="5" class="no-results-mobile">
+                  <div class="no-results-icon">
+                    <i class="bi bi-database"></i>
+                  </div>
+                  <div>No data loaded</div>
+                  <div style="font-size: 12px; margin-top: 8px;">Tap refresh to load data</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Tab Content (Hidden by default) -->
+    <div class="tab-content" id="chartsTab" style="display: none;">
+      <div class="chart-container-mobile">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Data Overview</div>
+            <div class="chart-subtitle">Auto-generated from your data</div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="mobileChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights Tab Content (Hidden by default) -->
+    <div class="tab-content" id="insightsTab" style="display: none;">
+      <div class="chart-container-mobile">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Key Insights</div>
+            <div class="chart-subtitle">Summary of your data</div>
+          </div>
+        </div>
+        <div style="padding: 16px 0;">
+          <div class="stat-card-mobile" style="margin-bottom: 12px;">
+            <div class="stat-label">Data Freshness</div>
+            <div class="stat-value" id="lastUpdated">—</div>
+          </div>
+          <div class="stat-card-mobile" style="margin-bottom: 12px;">
+            <div class="stat-label">Unique Values</div>
+            <div class="stat-value" id="uniqueValues">—</div>
+          </div>
+          <div class="stat-card-mobile">
+            <div class="stat-label">Data Quality</div>
+            <div class="stat-value" id="dataQuality">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active">
+      <i class="bi bi-house nav-icon"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="bi bi-bar-chart nav-icon"></i>
+      <span>Analytics</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="bi bi-table nav-icon"></i>
+      <span>Data</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="bi bi-gear nav-icon"></i>
+      <span>Settings</span>
+    </a>
+  </div>
+
+  <script>
+    /****************** CONFIG ******************/
+    const SHEET_ID = "1ykCL_8zYKNzIq2C4YhybupFZ6CBxACMLR7T4nNkzMgo";
+    const GVIZ = (id) => `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json`;
+    /********************************************/
+
+    // State
+    let headers = [];
+    let rows = [];
+    let filtered = [];
+    let mobileChart = null;
+    let currentTab = 'data';
+    let searchTimeout = null;
+
+    // DOM Elements
+    const mobileSearch = document.getElementById('mobileSearch');
+    const clearSearch = document.getElementById('clearSearch');
+    const searchLoading = document.getElementById('searchLoading');
+    const searchResults = document.getElementById('searchResults');
+    const resultsList = document.getElementById('resultsList');
+    const resultsCount = document.getElementById('resultsCount');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const mobileTotal = document.getElementById('mobileTotal');
+    const mobileFiltered = document.getElementById('mobileFiltered');
+    const tableInfoMobile = document.getElementById('tableInfoMobile');
+    const mobileThead = document.getElementById('mobileThead');
+    const mobileTbody = document.getElementById('mobileTbody');
+    const downloadMobile = document.getElementById('downloadMobile');
+    const filterMobile = document.getElementById('filterMobile');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const uniqueValues = document.getElementById('uniqueValues');
+    const dataQuality = document.getElementById('dataQuality');
+
+    // Tab Elements
+    const tabs = document.querySelectorAll('.mobile-tab');
+    const dataTab = document.getElementById('dataTab');
+    const chartsTab = document.getElementById('chartsTab');
+    const insightsTab = document.getElementById('insightsTab');
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      setupEventListeners();
+      // Try to load data on startup
+      setTimeout(() => {
+        fetchSheet();
+      }, 500);
+    });
+
+    function setupEventListeners() {
+      // Search functionality
+      mobileSearch.addEventListener('input', function() {
+        const query = this.value.trim();
+        clearSearch.style.display = query ? 'block' : 'none';
+        
+        if (query.length > 0) {
+          // Show loading animation
+          searchLoading.style.display = 'flex';
+          
+          // Clear previous timeout
+          if (searchTimeout) clearTimeout(searchTimeout);
+          
+          // Search after delay
+          searchTimeout = setTimeout(() => {
+            performSearch(query);
+          }, 300);
+        } else {
+          searchLoading.style.display = 'none';
+          searchResults.style.display = 'none';
+        }
+      });
+
+      clearSearch.addEventListener('click', function() {
+        mobileSearch.value = '';
+        this.style.display = 'none';
+        searchLoading.style.display = 'none';
+        searchResults.style.display = 'none';
+        applyFilter('');
+      });
+
+      // Refresh button
+      refreshBtn.addEventListener('click', function() {
+        this.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+        fetchSheet();
+      });
+
+      // Download button
+      downloadMobile.addEventListener('click', function() {
+        if (!rows.length) {
+          showToast('No data to download');
+          return;
+        }
+        downloadCSV();
+      });
+
+      // Filter button
+      filterMobile.addEventListener('click', function() {
+        showToast('Filter options would open here');
+      });
+
+      // Tab switching
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          switchTab(tabName);
+        });
+      });
+
+      // Bottom nav items
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          showToast(`${this.querySelector('span').textContent} view`);
+        });
+      });
+    }
+
+    function switchTab(tabName) {
+      // Update active tab
+      tabs.forEach(tab => tab.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      
+      // Show/hide tab content
+      dataTab.style.display = 'none';
+      chartsTab.style.display = 'none';
+      insightsTab.style.display = 'none';
+      
+      if (tabName === 'data') {
+        dataTab.style.display = 'block';
+      } else if (tabName === 'charts') {
+        chartsTab.style.display = 'block';
+        if (filtered.length > 0) {
+          renderMobileChart();
+        }
+      } else if (tabName === 'insights') {
+        insightsTab.style.display = 'block';
+        updateInsights();
+      }
+      
+      currentTab = tabName;
+    }
+
+    function showToast(message) {
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        z-index: 10000;
+        max-width: 80%;
+        text-align: center;
+      `;
+      
+      document.body.appendChild(toast);
+      
+      // Remove toast after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 2000);
+    }
+
+    // Parse Google Sheets data
+    function parseGvizText(text) {
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      if (start === -1 || end === -1) throw new Error("Unexpected GViz");
+      return JSON.parse(text.slice(start, end+1));
+    }
+
+    async function fetchSheet() {
+      try {
+        showToast('Loading data from Google Sheets...');
+        const res = await fetch(GVIZ(SHEET_ID), {cache:"no-store"});
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const text = await res.text();
+        const json = parseGvizText(text);
+        
+        const cols = json.table.cols.map((c,i) => (c.label || ("Column " + (i+1))).trim());
+        headers = cols;
+        rows = json.table.rows.map(r => {
+          const obj = {};
+          for (let i=0;i<cols.length;i++){
+            const cell = r.c[i];
+            obj[cols[i]] = (cell && cell.v !== undefined && cell.v !== null) ? String(cell.v) : "";
+          }
+          return obj;
+        });
+        
+        filtered = [...rows];
+        updateMobileUI();
+        showToast(`Loaded ${rows.length} rows from Google Sheets`);
+      } catch (e) {
+        console.error(e);
+        showToast('Error loading data from Google Sheets');
+        mobileTbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="no-results-mobile">
+              <div class="no-results-icon" style="background: rgba(220,53,69,0.1);">
+                <i class="bi bi-exclamation-triangle" style="color: #dc3545;"></i>
+              </div>
+              <div>Error loading Google Sheets data</div>
+              <div style="font-size: 12px; margin-top: 8px;">Check connection & try again</div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function updateMobileUI() {
+      // Update stats
+      mobileTotal.textContent = rows.length;
+      mobileFiltered.textContent = filtered.length;
+      
+      // Update table info
+      tableInfoMobile.textContent = `${filtered.length} rows`;
+      
+      // Render table
+      renderMobileTable();
+      
+      // Update insights if on that tab
+      if (currentTab === 'insights') {
+        updateInsights();
+      }
+    }
+
+    function performSearch(query) {
+      if (!rows.length) {
+        showToast('No data loaded. Please refresh first.');
+        searchLoading.style.display = 'none';
+        return;
+      }
+
+      const searchTerm = query.toLowerCase();
+      const searchResultsArray = [];
+      
+      // Search through all rows and columns
+      rows.forEach((row, index) => {
+        let matchFound = false;
+        let matchDetails = {};
+        
+        headers.forEach(header => {
+          const cellValue = String(row[header] || '').toLowerCase();
+          if (cellValue.includes(searchTerm)) {
+            matchFound = true;
+            matchDetails[header] = row[header];
+          }
+        });
+        
+        if (matchFound) {
+          searchResultsArray.push({
+            rowIndex: index,
+            rowData: row,
+            matches: matchDetails
+          });
+        }
+      });
+      
+      // Display search results
+      displaySearchResults(searchResultsArray, searchTerm);
+      searchLoading.style.display = 'none';
+    }
+
+    function displaySearchResults(results, searchTerm) {
+      if (results.length === 0) {
+        resultsList.innerHTML = `
+          <div class="no-results-mobile">
+            <div class="no-results-icon">
+              <i class="bi bi-search"></i>
+            </div>
+            <div>No results found</div>
+            <div style="font-size: 12px; margin-top: 8px;">Try different search terms</div>
+          </div>
+        `;
+      } else {
+        resultsList.innerHTML = results.map(result => {
+          const firstHeader = headers[0];
+          const mainValue = result.rowData[firstHeader] || 'No title';
+          
+          // Create highlighted text for main value
+          const highlightedMain = highlightSearchTerm(mainValue, searchTerm);
+          
+          // Create details for ALL columns
+          const allDetails = headers.map(header => {
+            const value = result.rowData[header] || 'N/A';
+            const highlightedValue = highlightSearchTerm(value, searchTerm);
+            
+            return `
+              <div class="result-detail">
+                <span class="result-label">${header}:</span>
+                <span class="result-value">${highlightedValue}</span>
+              </div>
+            `;
+          }).join('');
+          
+          return `
+            <div class="result-item" data-row-index="${result.rowIndex}">
+              <div class="result-main">${highlightedMain}</div>
+              <div class="result-details">
+                ${allDetails}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      resultsCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+      searchResults.style.display = 'block';
+    }
+
+    function highlightSearchTerm(text, searchTerm) {
+      if (!searchTerm || !text) return text || 'N/A';
+      
+      const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+      return String(text).replace(regex, '<span class="result-highlight">$1</span>');
+    }
+
+    function escapeRegex(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function renderMobileTable() {
+      if (!headers.length || !filtered.length) {
+        mobileTbody.innerHTML = `
+          <tr>
+            <td colspan="${headers.length || 1}" class="no-results-mobile">
+              <div class="no-results-icon">
+                <i class="bi bi-search"></i>
+              </div>
+              <div>No data to display</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      // Build headers (show first 3 columns for mobile)
+      const displayHeaders = headers.slice(0, 3);
+      mobileThead.innerHTML = `
+        <tr>
+          ${displayHeaders.map(h => `<th>${escapeHtml(h)}</th>`).join('')}
+          ${headers.length > 3 ? '<th>...</th>' : ''}
+        </tr>
+      `;
+      
+      // Build rows (limit to 50 for performance)
+      const displayRows = filtered.slice(0, 50);
+      mobileTbody.innerHTML = displayRows.map(row => `
+        <tr>
+          ${displayHeaders.map(h => `<td>${escapeHtml(row[h] || '')}</td>`).join('')}
+          ${headers.length > 3 ? '<td>...</td>' : ''}
+        </tr>
+      `).join('');
+      
+      // Add note if there are more rows
+      if (filtered.length > 50) {
+        mobileTbody.innerHTML += `
+          <tr>
+            <td colspan="${displayHeaders.length + (headers.length > 3 ? 1 : 0)}" style="text-align: center; color: var(--muted); font-size: 12px; padding: 16px;">
+              Showing 50 of ${filtered.length} rows
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function renderMobileChart() {
+      const ctx = document.getElementById('mobileChart');
+      if (!headers.length) return;
+      
+      if (mobileChart) mobileChart.destroy();
+      
+      // Simple chart for mobile - just show counts of first column values
+      const firstCol = headers[0];
+      const counts = {};
+      filtered.forEach(row => {
+        const val = row[firstCol] || 'Unknown';
+        counts[val] = (counts[val] || 0) + 1;
+      });
+      
+      const labels = Object.keys(counts).slice(0, 8); // Limit to 8 for mobile
+      const data = labels.map(label => counts[label]);
+      
+      mobileChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              '#2b9cff', '#7be3c7', '#ff7ab6', '#ffcf6b',
+              '#a78bfa', '#60a5fa', '#34d399', '#fbbf24'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12,
+                font: {
+                  size: 11
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateInsights() {
+      if (!headers.length) return;
+      
+      lastUpdated.textContent = new Date().toLocaleTimeString();
+      
+      // Calculate unique values in first column
+      const firstCol = headers[0];
+      const uniqueSet = new Set(rows.map(row => row[firstCol]).filter(val => val));
+      uniqueValues.textContent = uniqueSet.size;
+      
+      // Simple data quality metric (non-empty cells in first 3 columns)
+      let totalCells = 0;
+      let filledCells = 0;
+      
+      headers.slice(0, 3).forEach(col => {
+        rows.forEach(row => {
+          totalCells++;
+          if (row[col] && row[col].trim() !== '') filledCells++;
+        });
+      });
+      
+      const qualityPercent = totalCells > 0 ? Math.round((filledCells / totalCells) * 100) : 0;
+      dataQuality.textContent = `${qualityPercent}%`;
+    }
+
+    function applyFilter(query) {
+      if (!query) {
+        filtered = [...rows];
+      } else {
+        const lowQuery = query.toLowerCase();
+        filtered = rows.filter(row => 
+          headers.some(header => 
+            String(row[header] || '').toLowerCase().includes(lowQuery)
+          )
+        );
+      }
+      
+      updateMobileUI();
+      
+      // Update chart if on charts tab
+      if (currentTab === 'charts' && filtered.length > 0) {
+        renderMobileChart();
+      }
+    }
+
+    function downloadCSV() {
+      const csvContent = [
+        headers.join(','),
+        ...filtered.map(row => 
+          headers.map(header => 
+            `"${(row[header] || '').replace(/"/g, '""')}"`
+          ).join(',')
+        )
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'mobile_data_export.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast('CSV downloaded');
+    }
+
+    function escapeHtml(text) {
+      if (text === undefined || text === null) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
